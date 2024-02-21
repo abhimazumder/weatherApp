@@ -17,7 +17,7 @@ const Header = () => {
           <Typography variant="h5" component="div" sx={{ flexGrow: 1 }}>
             Weather App
           </Typography>
-          <GitHubIcon style={{ color: "white", cursor:"pointer" }} />
+          <GitHubIcon style={{ color: "white", cursor: "pointer" }} onClick={() => window.open("https://github.com/abhimazumder/weatherApp", "_blank")} />
         </Toolbar>
       </AppBar>
     </Box>
