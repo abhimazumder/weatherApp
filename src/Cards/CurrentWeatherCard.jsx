@@ -1,9 +1,11 @@
 import PropTypes from "prop-types";
 import { Grid, Paper, Typography } from "@mui/material";
+import ReactCountryFlag from "react-country-flag";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
-import ReactCountryFlag from "react-country-flag";
 import { getDay, getTime, getLabel } from "../Utils/Functions";
+import { getWeatherDescriptionImage } from "../Controllers/SearchController";
+import { useEffect, useState } from "react";
 
 const CurrentWeatherCard = ({ weatherDetails, selectedOption }) => {
   const excludeValues = [
@@ -16,11 +18,40 @@ const CurrentWeatherCard = ({ weatherDetails, selectedOption }) => {
     "weather_code",
   ];
 
+  const [descAndImg, setDescAndImg] = useState({
+    description: null,
+    image: null,
+  });
+
   const formatLocation = () => {
     const { admin1, admin2, country } = selectedOption || {};
     const components = [admin1, admin2, country];
     return components.filter(Boolean).join(", ");
   };
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    const setWeatherDescriptionAndImage = async () => {
+      try {
+        const { weather_code: weatherCode, is_day: isDay } =
+          weatherDetails.current;
+        const res = await getWeatherDescriptionImage(
+          weatherCode,
+          isDay,
+          signal
+        );
+        res !== null && setDescAndImg(res);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    setWeatherDescriptionAndImage();
+    return () => {
+      controller.abort();
+    };
+  }, [weatherDetails]);
 
   return (
     <Paper
@@ -37,7 +68,7 @@ const CurrentWeatherCard = ({ weatherDetails, selectedOption }) => {
         color: "white",
       }}
     >
-      <Grid container spacing={2} padding={2}>
+      <Grid container spacing={2} paddingX={2}>
         <Grid item xs={6}>
           {weatherDetails?.current?.is_day == "1" ? (
             <WbSunnyIcon sx={{ fontSize: "120px" }} />
@@ -66,7 +97,8 @@ const CurrentWeatherCard = ({ weatherDetails, selectedOption }) => {
             {formatLocation()}
           </Typography>
         </Grid>
-        <Grid item xs={6} container flexDirection="column">
+        <Grid item xs={12}></Grid>
+        <Grid item xs={6}>
           <Typography
             variant="h3"
             sx={{ display: "flex", flexDirection: "row" }}
@@ -81,7 +113,17 @@ const CurrentWeatherCard = ({ weatherDetails, selectedOption }) => {
               )}
             </Typography>
           </Typography>
-          <Typography variant="body2">Temperature</Typography>
+          <Typography
+            variant="body2"
+            style={{
+              width:"100%",
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {descAndImg?.description || <em>NA</em>}
+          </Typography>
         </Grid>
 
         <Grid item xs={6}>
@@ -101,13 +143,7 @@ const CurrentWeatherCard = ({ weatherDetails, selectedOption }) => {
               </Typography>
             ))}
         </Grid>
-        <Grid
-          container
-          item
-          xs={12}
-          sx={{ marginTop: "30px" }}
-          justifyContent="space-between"
-        >
+        <Grid container item xs={12} mt="40px" justifyContent="space-between">
           <Typography variant="h5">
             {getDay(weatherDetails?.current?.time?.toString()) || <em>NA</em>}
           </Typography>

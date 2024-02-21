@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import { getWeather } from "./Controllers/SearchController";
 import CurrentWeatherCard from "./Cards/CurrentWeatherCard";
@@ -16,16 +16,23 @@ function App() {
     setSelectedOption(option);
   };
 
-  useMemo(() => {
+  useEffect(() => {
     if (!selectedOption) return;
 
-    getWeather(selectedOption?.latitude, selectedOption?.longitude)
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    getWeather(selectedOption?.latitude, selectedOption?.longitude, signal)
       .then((res) => {
         setWeatherDetails(res);
       })
       .catch((err) => {
         console.log(err);
       });
+
+    return () => {
+      controller.abort();
+    };
   }, [selectedOption]);
 
   return (
