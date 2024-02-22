@@ -68,7 +68,7 @@ const CurrentWeatherCard = ({ weatherDetails, selectedOption }) => {
         color: "white",
       }}
     >
-      <Grid container spacing={2} paddingX={2}>
+      <Grid container spacing={2} paddingX={2} rowGap={3}>
         <Grid item xs={6}>
           {weatherDetails?.current?.is_day == "1" ? (
             <WbSunnyIcon sx={{ fontSize: "120px" }} />
@@ -92,12 +92,15 @@ const CurrentWeatherCard = ({ weatherDetails, selectedOption }) => {
           </Typography>
           <Typography
             variant="body2"
-            sx={{ fontSize: "12px", textAlign: "end" }}
+            sx={{
+              fontSize: "12px",
+              textAlign: "end",
+              width: "100%",
+            }}
           >
             {formatLocation()}
           </Typography>
         </Grid>
-        <Grid item xs={12}></Grid>
         <Grid item xs={6}>
           <Typography
             variant="h3"
@@ -116,7 +119,7 @@ const CurrentWeatherCard = ({ weatherDetails, selectedOption }) => {
           <Typography
             variant="body2"
             style={{
-              width:"100%",
+              width: "100%",
               overflow: "hidden",
               whiteSpace: "nowrap",
               textOverflow: "ellipsis",
@@ -133,7 +136,13 @@ const CurrentWeatherCard = ({ weatherDetails, selectedOption }) => {
               <Typography
                 key={key}
                 variant="body2"
-                sx={{ display: "flex", justifyContent: "flex-end" }}
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  width: "100%",
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
+                }}
               >
                 {`${getLabel(key)}: ${
                   weatherDetails?.current[key]?.toString() || <em>NA</em>
@@ -143,7 +152,7 @@ const CurrentWeatherCard = ({ weatherDetails, selectedOption }) => {
               </Typography>
             ))}
         </Grid>
-        <Grid container item xs={12} mt="40px" justifyContent="space-between">
+        <Grid container item xs={12} justifyContent="space-between">
           <Typography variant="h5">
             {getDay(weatherDetails?.current?.time?.toString()) || <em>NA</em>}
           </Typography>

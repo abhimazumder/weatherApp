@@ -2,7 +2,7 @@ import { Button, Grid, Paper, Typography } from "@mui/material";
 import PropTypes from "prop-types";
 import Logo from "../assets/Logo";
 import SearchBar from "../Components/SearchBar";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { getLocalAddress } from "../Controllers/SearchController";
 
@@ -12,13 +12,11 @@ const SearchCard = ({ updateSelectedOption }) => {
     if (geoCode) {
       updateSelectedOption(JSON.parse(geoCode));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const getUserLocation = () => {
+  const getUserLocation = useCallback(() => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        console.log(position);
         const { latitude, longitude } = position.coords;
         getLocalAddress(latitude, longitude)
           .then((res) => {
@@ -52,7 +50,7 @@ const SearchCard = ({ updateSelectedOption }) => {
         console.log(err);
       }
     );
-  };
+  }, []);
 
   return (
     <Paper

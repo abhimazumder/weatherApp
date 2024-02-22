@@ -21,7 +21,7 @@ const SearchBar = ({ updateSelectedOption }) => {
 
   const fetchData = useCallback(async () => {
     try {
-      if (searchText.length > 0) {
+      if (searchText?.length > 0) {
         setLoading(true);
         const res = await getGeoCode(searchText);
         setSearchResults(res);
@@ -51,6 +51,7 @@ const SearchBar = ({ updateSelectedOption }) => {
   const handleSelectedValueChange = useCallback(
     (_, newValue) => {
       setSelectedOption(newValue);
+      localStorage.setItem("geoCode", JSON.stringify(newValue));
       newValue && updateSelectedOption(newValue);
     },
     [updateSelectedOption]
